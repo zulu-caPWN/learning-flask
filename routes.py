@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
-from models import db
+from models import db, User 
 from forms import SignUpForm 
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://127.0.0.1/learningflask'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/learningflask'
 db = SQLAlchemy(app)
 
 app.secret_key = 'development-key' #csrf
@@ -27,6 +27,9 @@ def signup():
         if form.validate() == False:
             return render_template('signup.html', form=form)
         else:
+            newuser = User(form.first_name.data, form.last_name.data, form.email.data, form.password.data)
+            db.session.add(newuser)
+            db.session.commit()
             return 'Success'
 
     elif request.method == 'GET':
