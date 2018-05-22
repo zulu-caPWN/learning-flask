@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% blcok content%}
+    <main class="container signup-section">
+        <div class="section-content">
+            <h2>Creat An Account</h2>
+
+            <form method="POST" actions="/signup">
+                {{ form.hidden_tag() }} #csrf
+
+                <div class="form-group">
+                    {{ form.first_name.label }}
+                    {{ form.first_name }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.last_name.label }}
+                    {{ form.last_name }}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label }}
+                    {{ form.email }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.password.label }}
+                    {{ form.password }}
+                </div>
+
+                {{ form.submit(class="brn-primary")}}
+
+            </form>
+        </div>
+    </main>
+{% endblock %}
