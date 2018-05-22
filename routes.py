@@ -2,14 +2,19 @@ from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from models import db, User 
 from forms import SignUpForm 
-import sensitive
+#import sensitive
+#sensitive.py with sensitive.pyc 
+
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = sensitive.psycopg_db_connection
+#app.config['SQLALCHEMY_DATABASE_URI'] = sensitive.psycopg_db_connection
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/learningflask'
 db = SQLAlchemy(app)
 
-app.secret_key = sensitive.app_secret_key #csrf
+#app.secret_key = sensitive.app_secret_key #csrf
+app.secret_key = 'development-key' #csrf
+
 
 @app.route("/")
 def index():
