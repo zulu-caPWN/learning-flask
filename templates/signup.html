@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
 
-{% blcok content%}
+{% block content%}
     <main class="container signup-section">
         <div class="section-content">
             <h2>Creat An Account</h2>
 
             <form method="POST" actions="/signup">
-                {{ form.hidden_tag() }} #csrf
+                {{ form.hidden_tag() }} <!-- csrf -->
 
                 <div class="form-group">
                     {{ form.first_name.label }}
