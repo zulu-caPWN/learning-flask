@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from models import db, User 
-from forms import SignUpForm, LoginForm 
+from models import db, User, Place 
+from forms import SignUpForm, LoginForm, AddressForm 
 #import sensitive
 #sensitive.py with sensitive.pyc is messing with hero, I must need to upload sensitive.pyc to heroku directly
 #to make it work, for now we will keep it out.
@@ -27,6 +27,10 @@ def about():
 
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
+
+    if 'email' in session:
+        return redirect(url_for('home'))
+
     form = SignUpForm()
 
     if request.method == 'POST':
@@ -46,12 +50,33 @@ def signup():
         return render_template('signup.html', form=form)
 
 
-@app.route('/home')
+@app.route('/home', methods=["POST", "GET"])
 def home():
-    return render_template('home.html')
+    if 'email' not in session:
+        return redirect(url_for('login'))
+    form = AddressForm()
+
+    places = []
+    my_coordinates = (37.4221, -122.0844) #just dflts, mean nothing
+    if request.method == "POST":
+        if form.validate == False:
+            return render_template('home.html', form=form)
+        else:
+            # get the addy
+            address = form.address.data 
+            # make a model to wrap or consume the wiki api then query it at https://www.mediawiki.org/wiki/Extension:GeoData#Api
+            p = Place()
+            my_coordinates = p.address_to_latlng(address)
+            places = p.query(address)
+            # return results
+            return render_template('home.html', form=form, my_coordinates=my_coordinates, places=places)
+    elif request.method == "GET":
+        return render_template('home.html', form=form, my_coordinates=my_coordinates, places=places)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if 'email' in session:
+        return redirect(url_for('home'))
     form = LoginForm()
 
     if request.method == "POST":
@@ -72,7 +97,10 @@ def login():
     elif request.method == "GET":
         return render_template("login.html", form=form)
 
-
+@app.route("/logout")
+def logout():
+    session.pop('email', None)
+    return redirect(url_for('index'))
 
 
 
